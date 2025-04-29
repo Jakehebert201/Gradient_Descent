@@ -1,3 +1,4 @@
+using System.Globalization;
 using GradientDescent;
 public class GeneticAlgorithm{
 
@@ -9,10 +10,9 @@ private double mutationRate;
 private Random randall = new Random();
 private GradientDescent.GradientDescent.OptimizationFunction fitnessFunction;
 
-public GeneticAlgorithm(int populationSize, double[] population, double mutationRate, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction)
+public GeneticAlgorithm(int populationSize, double mutationRate, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction)
 {
     this.populationSize = populationSize;
-    this.population = population;
     this.mutationRate = mutationRate;
     this.fitnessFunction = fitnessFunction;
     InitializePopulation();
@@ -26,10 +26,11 @@ private void InitializePopulation(){
     }
 }
 
-public double Evolve(){
+public void Evolve(){
     //fitness function, a higher value = better candidate
     double[] fitness = CalculateFitness(population, populationSize, fitnessFunction);
     //Selection
+    
     int selectedCount = (int)Math.Ceiling(population.Length/2.0);
     List<double> selectedParents = new();
     for(int i = 0; i < selectedCount; i++){
@@ -37,14 +38,11 @@ public double Evolve(){
         selectedParents.Add(parent);
     }
     //Crossover
+
     double[] newPopulation = Crossover(selectedParents);
+    //Mutation and Replacement
 
-    
-
-    //Mutation
-
-    //Replacement
-    return 0;
+    population = Mutation(newPopulation, mutationRate);
 }
 private double[] CalculateFitness(double[] population, int populationSize, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction){
     double[] fitness = new double[populationSize];
@@ -88,7 +86,15 @@ private double[] Crossover(List<double> parents){
     
     return newPopulation.ToArray();
 }
-
+private double[] Mutation(double[] population, double mutationRate){        
+        for(int i = 0; i < population.Length; i++){
+            if(randall.NextDouble() < mutationRate){
+                double epsilon = (randall.NextDouble()*1.0)-0.5; //Should now be a random value between -0.5 and 0.5
+                population[i] += epsilon;
+        }
+    }
+    return population;
+}
 
 
 }
