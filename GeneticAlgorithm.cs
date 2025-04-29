@@ -8,13 +8,15 @@ private int populationSize;
 private double[] population;
 private double mutationRate;
 private Random randall = new Random();
+private bool minimize;
 private GradientDescent.GradientDescent.OptimizationFunction fitnessFunction;
 
-public GeneticAlgorithm(int populationSize, double mutationRate, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction)
+public GeneticAlgorithm(int populationSize, double mutationRate, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction, bool minimize)
 {
     this.populationSize = populationSize;
     this.mutationRate = mutationRate;
     this.fitnessFunction = fitnessFunction;
+    this.minimize = minimize;
     InitializePopulation();
 }
 private void InitializePopulation(){
@@ -28,7 +30,7 @@ private void InitializePopulation(){
 
 public void Evolve(){
     //fitness function, a higher value = better candidate
-    double[] fitness = CalculateFitness(population, populationSize, fitnessFunction);
+    double[] fitness = CalculateFitness(population, fitnessFunction);
     //Selection
     
     int selectedCount = (int)Math.Ceiling(population.Length/2.0);
@@ -44,10 +46,10 @@ public void Evolve(){
 
     population = Mutation(newPopulation, mutationRate);
 }
-private double[] CalculateFitness(double[] population, int populationSize, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction){
-    double[] fitness = new double[populationSize];
-    for(int i = 0; i < populationSize; i++){
-        fitness[i] = fitnessFunction(population[i]);
+private double[] CalculateFitness(double[] population, GradientDescent.GradientDescent.OptimizationFunction fitnessFunction){
+    double[] fitness = new double[population.Length];
+    for(int i = 0; i < population.Length; i++){
+        fitness[i] = minimize ? -fitnessFunction(population[i]) : fitnessFunction(population[i]);
     }
     return fitness;
 }
@@ -95,6 +97,10 @@ private double[] Mutation(double[] population, double mutationRate){
     }
     return population;
 }
-
+    public override string ToString()
+    { 
+        string popvalues = string.Join(",", population);
+        return $"GENETIC ALGORITHM:\nMinimized?:{minimize}\nMutation Rate: {mutationRate}\nPopulation Size: {populationSize}\nPopulation: {popvalues}";
+    }
 
 }

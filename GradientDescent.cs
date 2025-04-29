@@ -13,7 +13,7 @@ namespace GradientDescent
         static OptimizationFunction func = x => (System.Math.Sin(x)) + (0.1 * x);
 
         // Descent system  
-        static double Optimize()
+        public static double Optimize(OptimizationFunction func)
         {
             double currentX = randall.NextDouble() * 10.0;
             double learningRate = 0.01;
