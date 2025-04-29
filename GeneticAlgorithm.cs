@@ -37,9 +37,8 @@ public double Evolve(){
         selectedParents.Add(parent);
     }
     //Crossover
+    double[] newPopulation = Crossover(selectedParents);
 
-    //Combine 2 parent values into a new child value
-    //either average crossover, or random weighted crossover (child = (1-a) * p[1] + a x p[2])
     
 
     //Mutation
@@ -72,9 +71,22 @@ private double RouletteSelection(double[] population, double[] fitnesses)
 
     return population[population.Length - 1]; // fallback
 }
-private double[] Crossover(double[] parents){
-    double[] children = new double[populationSize];
-    return children;
+
+//Combine 2 parent values into a new child value
+//either average crossover, or random weighted crossover (child = (1-a) * p[1] + a x p[2])
+private double[] Crossover(List<double> parents){
+    List<double> newPopulation = new();
+    for(int i = 0; i < parents.Count; i+=2){
+        double parent1 = parents[i];
+        double parent2 = parents[(i+1) % parents.Count]; //Wrapping in case of out of bounds
+        for(int j = 0; j <4; j++){
+            double alpha = randall.NextDouble();
+            double child = ((1-alpha) * parent1) + alpha*parent2;
+            newPopulation.Add(child);
+        }
+    }
+    
+    return newPopulation.ToArray();
 }
 
 
